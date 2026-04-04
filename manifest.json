@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "PinyinOverlay",
+  "version": "0.1.0",
+  "description": "Overlays pinyin pronunciation above Chinese characters on webpages.",
+
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content_scripts/content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

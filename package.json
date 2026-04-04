@@ -1,0 +1,12 @@
+{
+  "name": "pinyin-overlay",
+  "version": "0.1.0",
+  "description": "Firefox extension: pinyin overlay for Chinese characters",
+  "private": true,
+  "scripts": {
+    "dev": "web-ext run"
+  },
+  "devDependencies": {
+    "web-ext": "^8.0.0"
+  }
+}
