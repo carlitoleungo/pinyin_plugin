@@ -66,3 +66,4 @@ Planned flow:
 | 2026-04-04 | No popup in scaffold | No settings/toggle feature yet; popup adds surface area with no current benefit | Popup (deferred) |
 | 2026-04-04 | No `console.log` in content.js | A log on every page load is noise; IIFE + comment is cleaner | `"PinyinOverlay loaded"` log (rejected) |
 | 2026-04-04 | `matches: *://*/*` | Avoids `file://` and `ftp://` scope included by `<all_urls>`; can be locked to specific domains later | `<all_urls>` (slightly broader scope) |
+| 2026-04-04 | CJK detection limited to U+4E00–U+9FFF | Basic CJK block covers the vast majority of modern Chinese text; extended blocks (U+3400–U+4DBF, U+20000+) cover rare characters used in classical Chinese and uncommon surnames — out of scope for MVP | Full Han script via `\p{Script=Han}` (deferred: broader than intended, requires `u` flag) |
