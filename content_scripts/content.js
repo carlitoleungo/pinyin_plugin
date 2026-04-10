@@ -55,6 +55,26 @@
     parent.replaceChild(fragment, node);
   }
 
+  function processChunk(nodes, index) {
+    const CHUNK_SIZE = 100;
+    const end = Math.min(index + CHUNK_SIZE, nodes.length);
+    for (let i = index; i < end; i++) {
+      if (!nodes[i].parentNode) continue;
+      annotateTextNode(nodes[i]);
+    }
+    if (end < nodes.length) {
+      scheduleChunk(nodes, end);
+    }
+  }
+
+  function scheduleChunk(nodes, index) {
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(() => processChunk(nodes, index));
+    } else {
+      setTimeout(() => processChunk(nodes, index), 0);
+    }
+  }
+
   const chineseNodes = findChineseTextNodes();
-  chineseNodes.forEach(annotateTextNode);
+  scheduleChunk(chineseNodes, 0);
 })();
