@@ -4,13 +4,15 @@
 (function () {
   'use strict';
 
+  // Basic CJK Unified Ideographs only (U+4E00–U+9FFF); extended blocks are out of scope (see ARCHITECTURE.md)
   const CJK_RE = /[\u4E00-\u9FFF]/;
   const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'NOSCRIPT', 'RT', 'RUBY']);
+  const CHUNK_SIZE = 100;
 
   function findChineseTextNodes() {
     if (!document.body) return [];
 
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
     const nodes = [];
     let node;
     while ((node = walker.nextNode())) {
@@ -55,8 +57,8 @@
     parent.replaceChild(fragment, node);
   }
 
+  // Process nodes in chunks to avoid blocking the main thread on heavy Chinese pages
   function processChunk(nodes, index) {
-    const CHUNK_SIZE = 100;
     const end = Math.min(index + CHUNK_SIZE, nodes.length);
     for (let i = index; i < end; i++) {
       if (!nodes[i].parentNode) continue;

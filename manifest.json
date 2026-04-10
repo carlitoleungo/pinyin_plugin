@@ -4,6 +4,17 @@
   "version": "0.1.0",
   "description": "Overlays pinyin pronunciation above Chinese characters on webpages.",
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pinyin-overlay@localhost",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
+    }
+  },
+
   "content_scripts": [
     {
       "matches": ["*://*/*"],
