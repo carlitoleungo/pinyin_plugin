@@ -1,0 +1,10 @@
+ruby {
+  ruby-align: center;
+}
+
+rt {
+  font-size: 0.6em;
+  color: #e05;
+  line-height: 1;
+  user-select: none;
+}
