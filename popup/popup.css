@@ -1,0 +1,7 @@
+body {
+  min-width: 200px;
+  min-height: 80px;
+  margin: 0;
+  padding: 12px;
+  font-family: system-ui, sans-serif;
+}
