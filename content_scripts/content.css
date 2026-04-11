@@ -8,3 +8,5 @@ rt {
   line-height: 1;
   user-select: none;
 }
+
+body.pinyin-hidden rt { display: none; }

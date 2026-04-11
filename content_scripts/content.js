@@ -77,6 +77,15 @@
     }
   }
 
-  const chineseNodes = findChineseTextNodes();
-  scheduleChunk(chineseNodes, 0);
+  browser.runtime.onMessage.addListener(({ type, enabled }) => {
+    if (type === 'SET_ENABLED') {
+      document.body.classList.toggle('pinyin-hidden', !enabled);
+    }
+  });
+
+  browser.storage.local.get('enabled').then(({ enabled = true }) => {
+    if (!enabled) return;
+    const chineseNodes = findChineseTextNodes();
+    scheduleChunk(chineseNodes, 0);
+  });
 })();

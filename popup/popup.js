@@ -10,6 +10,9 @@
 
     toggle.addEventListener('change', () => {
       browser.storage.local.set({ enabled: toggle.checked });
+      browser.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+        browser.tabs.sendMessage(tab.id, { type: 'SET_ENABLED', enabled: toggle.checked });
+      }).catch(() => {}); // silently ignore if no content script on active tab (e.g. about: pages)
     });
   });
 })();
