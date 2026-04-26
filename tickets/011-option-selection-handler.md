@@ -14,6 +14,7 @@ toggle from ticket 009.
 - [ ] Selecting Chinese text **without** Option held produces **no** console output and **no** lookup call (verify by instrumenting `lookup` temporarily if needed)
 - [ ] With the extension toggled **off** in the popup, Option+selection does nothing (no log, no lookup, even if the page reloaded while enabled)
 - [ ] Selecting non-Chinese text with Option held produces no console output
+- [ ] Option+selecting `中国` on an already-annotated page (where the DOM contains `<ruby>中<rt>Zhōng</rt></ruby><ruby>国<rt>guó</rt></ruby>`) logs the **2-char** `中国` entry — not two separate 中 and 国 entries
 
 ## Files likely affected
 - `content_scripts/content.js`
@@ -25,9 +26,14 @@ toggle from ticket 009.
 
 **Event choice:** Use `document.addEventListener('mouseup', handler)`. `selectionchange` does not carry modifier-key state and fires far too often. `mouseup` fires once at the end of the drag and has `e.altKey` set correctly on macOS (Option → Alt).
 
-**Read the selection:** `window.getSelection().toString().trim()`. Bail early if empty. Check that at least one character matches `CJK_RE` before calling `segment` — cheaper than always segmenting.
+**Read the selection — strip pinyin contamination first.** On pages already annotated by the extension, `getSelection().toString()` returns a string like `"中Zhōng国guó"` because `<rt>` text is included in the selection. Passing that directly to `segment()` breaks longest-match on any multi-char word. Strip non-CJK characters before segmenting:
+```js
+const raw = window.getSelection().toString().trim();
+const cjkOnly = raw.replace(/[^一-鿿]/g, '');
+```
+Bail early if `cjkOnly` is empty (handles Option+click with no drag, Option+selecting English text, etc.). Pass `cjkOnly` to `segment()`, not `raw`. Log the result directly — the log shape reflects what ticket 012 will render.
 
-**Respect the enabled flag without re-reading storage on every mouseup.** The existing code in `content.js` reads `enabled` once at load. Promote that to a module-level `let enabled = <value>` inside the IIFE and have the existing `onMessage` listener update it on `SET_ENABLED`. The mouseup handler then just checks `if (!enabled) return;`. Cleanest pattern and avoids an async storage round-trip per selection.
+**Respect the enabled flag without re-reading storage on every mouseup.** The existing code in `content.js` reads `enabled` once at load. Promote that to a module-level `let enabled = <value>` inside the IIFE and have the existing `onMessage` listener update it on `SET_ENABLED`. The mouseup handler then just checks `if (!enabled) return;`. Cleanest pattern and avoids an async storage round-trip per selection. Keep the `body.classList` toggle and the `enabled` state update in the **same message-handler branch** — do not split them across two separate listeners, or they can fall out of sync.
 
 **Register OUTSIDE the page-load storage gate.** The mouseup listener should be attached unconditionally at IIFE entry — then gated internally by the `enabled` flag. Otherwise a cold-disabled page that gets re-enabled via popup message wouldn't get the listener until reload, which is worse than the annotation case because the user has no visual cue that "you need to reload."
 
@@ -41,6 +47,7 @@ toggle from ticket 009.
 - Test **without** Option — confirm zero console output (both in enabled and disabled extension states).
 - Test with extension toggled **off** in popup, then select Chinese with Option held — confirm no output.
 - Test on zhihu.com, baidu.com, and on a local HTML file with `<p lang="zh">` pasted Chinese to rule out site-specific event swallowing.
+- **Annotated-page test (critical):** on a page where pinyin annotation has already run, use Option+select to select `中国` from an annotated paragraph. Confirm the console logs a **single** `中国` entry — not two separate 中 and 国 entries. This validates the CJK-strip fix.
 - **Regression check:** existing ruby/rt annotation still works while the new handler is attached. Selection and pinyin hovering should not conflict.
 - **Popup live toggle:** with a Chinese page open, toggle extension off via popup — confirm subsequent Option+selection produces no log without a page reload.
 

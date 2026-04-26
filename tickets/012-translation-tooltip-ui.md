@@ -1,4 +1,14 @@
-# 012 — Translation tooltip UI
+# 012 — Translation tooltip UI *(SUPERSEDED)*
+
+> **Superseded by tech lead review.** This ticket was too large for a single session — positioning,
+> dismiss logic, and viewport-edge behaviour are independent concerns that are easier to test separately.
+> Replaced by:
+> - **[012a — Tooltip DOM, CSS, and row rendering](012a-tooltip-dom-render.md)**
+> - **[012b — Tooltip dismiss, viewport-edge flip, and row cap](012b-tooltip-dismiss-flip-cap.md)**
+>
+> Original ticket preserved below for reference.
+
+---
 
 ## Summary
 Renders the segmented lookup results from ticket 011 as a floating tooltip

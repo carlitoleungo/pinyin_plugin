@@ -1,4 +1,13 @@
-# 010 — Bundle CC-CEDICT and expose lookup/segment API
+# 010 — Bundle CC-CEDICT and expose lookup/segment API *(SUPERSEDED)*
+
+> **Superseded by tech lead review.** This ticket was too large for a single session and had hidden dependencies.
+> Replaced by:
+> - **[010a — Build CC-CEDICT prep script and commit lib/cedict.js](010a-build-cedict-script.md)**
+> - **[010b — Expose lookup/segment API in content-script scope](010b-cedict-lookup-segment-api.md)**
+>
+> Original ticket preserved below for reference.
+
+---
 
 ## Summary
 Ships the CC-CEDICT Chinese–English dictionary inside the extension so the content
